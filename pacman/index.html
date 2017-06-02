@@ -1,0 +1,217 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Pacman</title>
+    <style type="text/css">
+        body{
+            background-color: black;
+            margin: 0px;
+        }
+        div.row div{
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        div.brick{
+            background-color: blue;
+        }
+        div.coin{
+            background: url('coin.gif');
+            background-repeat: no-repeat;
+            background-position:center;
+        }
+        div#pacman{
+            background: url('pacman.gif');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+ /*           -webkit-transform: rotate(270deg);*/
+        }
+        .empty{
+        }
+        div#score{
+            border:1px solid white;
+            width: 40px;
+            height: 30px;
+            color: pink;
+            padding: 10px;
+            text-align: center;
+            position: absolute;
+            left: 55px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="world"></div> 
+        <div id="pacman" style='top: 20px; left: 20px;'></div>
+        <div id="score">Score: 00</div> 
+    </div>
+    <script>
+    var world =[
+        [2,2,2,2,2,2,2,2,2,2],
+        [2,1,1,2,1,1,1,1,1,2],
+        [2,1,2,2,1,2,2,2,2,2],
+        [2,1,1,1,1,1,1,1,1,2],
+        [2,1,1,1,1,1,1,1,1,2],
+        [2,1,1,2,1,1,1,1,1,2],
+        [2,1,2,2,1,2,2,2,2,2],
+        [2,1,1,1,1,1,1,1,1,2],
+        [2,1,1,1,1,1,1,1,1,2],
+        [2,1,1,1,1,1,2,2,2,2],
+        [2,2,1,1,1,1,2,1,1,2],
+        [2,1,1,1,1,1,1,1,2,2],
+        [2,1,1,1,1,1,2,2,2,2],
+        [2,2,1,1,1,1,2,1,1,2],
+        [2,1,1,1,1,1,1,1,2,2],
+        [2,2,2,2,2,2,2,2,2,2] 
+    ];
+    var pacman = {
+        x:1,
+        y:1
+    };
+    console.log(pacman);
+    var score = 0;
+
+    function displayWorld(){
+        var output ='';
+        for(var i=0; i < world.length; i++){
+//each iteration of this for loop is a row, need to open a row div tag then run another loop to ouput divs for coins, bricks, and empty spaces
+            output +="\n<div class='row'>"; 
+            for(var j=0; j < world[i].length; j++){
+                if(world[i][j] == 2){
+                    output +="<div class='brick'></div>";
+                }
+                else if(world[i][j] == 1){
+                output +="<div class='coin'></div>";
+                }
+                else if(world[i][j] == 0){
+                output +="<div class='empty'></div>";
+                }
+            }
+//close the row div at the end of each iteration through the first for loop
+            output +="\n</div>"; 
+        }
+        /*console.log(output);*/
+        document.getElementById("world").innerHTML=output;
+        /*console.log("get Elements OK");*/
+    }
+    function displayPacman(){
+        document.getElementById('pacman').style.left= pacman.x*20 + "px";
+        document.getElementById('pacman').style.top= pacman.y*20 + "px";       
+    };
+    function displayScore(){
+        document.getElementById('score').innerHTML = "Score: "+score;
+    }
+    displayWorld();
+    displayPacman();
+    document.onkeydown = function(data){
+ //the entire document is represented as an object. onkeydown is a listener triggering a function with a callback which we named data. Here we're logging the object that the keydown returned. That object has lots of keys and values such as keyCode; I notice that keyCode returns a number based on which key was pressed.  ArrowRight==39, Up==38, left==37, down==40
+        console.log(data.keyCode);
+        if(data.keyCode == 37){
+            if(world[pacman.y][pacman.x-1] ==1 || world[pacman.y][pacman.x-1] ==0){
+                pacman.x--;
+            }
+        }
+        if(data.keyCode == 39){
+            if(world[pacman.y][pacman.x+1] ==1 || world[pacman.y][pacman.x+1] ==0){
+                pacman.x++;
+            }
+        }
+        if(data.keyCode == 38){
+            if(world[pacman.y-1][pacman.x]==1 || world[pacman.y-1][pacman.x] ==0){
+                pacman.y--;
+            }
+        }
+        if(data.keyCode == 40){
+            if(world[pacman.y+1][pacman.x]==1 || world[pacman.y+1][pacman.x] ==0)
+            pacman.y++;
+        }
+/*the variable pacman is updated based on which key is pressed and then the function displayPacman is run to update position. 
+        document.getElementById("pacman").style.left = 50 + "px";       document.getElementById("pacman").style.left = 50 + "px";*/
+
+        if(world[pacman.y][pacman.x] ==1){
+            world[pacman.y][pacman.x] = 0;
+            score++; 
+            console.log("Score ="+ score);
+            displayWorld();
+            displayScore();
+        }
+        displayPacman();
+/*we use an if statemtn to check the value of world at pacman's current location; recall 1 coresponds to a coin; if pacman's location is a coin, change that coin to empty, represented by a zero. we also can track score by declaring a variable (done with other variable up higher) and incrementing. Could also use an if to prevent pacman for leaving the map; walls are represented by 2s. */
+
+    }
+    </script>
+</body>
+</html> 
+
+
+
+
+
+<!-- This was our inital HTML setup. Instead of hard coding all this, we just created a function called displayWorld    
+    
+    <div class="row">
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+    </div> 
+    <div class="row">
+        <div class="brick"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="brick"></div>
+    </div> 
+    <div class="row">
+        <div class="brick"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="pacman"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="brick"></div>
+    </div> 
+    <div class="row">
+        <div class="brick"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="brick"></div>
+    </div> 
+    <div class="row">
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+        <div class="brick"></div>
+    </div> -->
